@@ -28,6 +28,8 @@ dependencies {
 //	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+	implementation("com.google.guava:guava:31.1-jre")
+
 }
 
 tasks.named('test') {

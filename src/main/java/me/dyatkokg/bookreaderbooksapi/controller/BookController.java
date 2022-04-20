@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.dyatkokg.bookreaderbooksapi.dto.AllBookDTO;
 import me.dyatkokg.bookreaderbooksapi.dto.BookDTO;
 import me.dyatkokg.bookreaderbooksapi.dto.ReadBookDTO;
+import me.dyatkokg.bookreaderbooksapi.entity.BookPage;
 import me.dyatkokg.bookreaderbooksapi.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,8 @@ public class BookController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ReadBookDTO> findById(@PathVariable("id") String id) {
-        return bookService.getById(id);
+    public ResponseEntity<BookPage> findById(@PathVariable("id") String id, @RequestParam("page") Integer page) {
+        return bookService.getPageByBookId(id, page);
     }
 
     @DeleteMapping("{id}")

@@ -21,7 +21,7 @@ public interface BookMapper {
     @Mapping(source = "author", target = "author")
     AllBookDTO toEntityView(Book book);
 
-    @Mapping(source = "text", target = "text")
+
     ReadBookDTO toEntityReading(Book book);
 
 
