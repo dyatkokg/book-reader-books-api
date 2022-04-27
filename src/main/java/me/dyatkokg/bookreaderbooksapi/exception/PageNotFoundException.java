@@ -1,8 +1,8 @@
 package me.dyatkokg.bookreaderbooksapi.exception;
 
-public class PageNotFoundException extends RuntimeException{
+public class PageNotFoundException extends RuntimeException {
 
-    public PageNotFoundException(){
+    public PageNotFoundException() {
         super("This page was not found");
     }
 

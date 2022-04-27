@@ -31,6 +31,5 @@ public class Book {
     private User owner;
 
 
-
 }
 

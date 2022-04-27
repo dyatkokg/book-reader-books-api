@@ -1,8 +1,11 @@
 package me.dyatkokg.bookreaderbooksapi.exception.handler;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.slf4j.Slf4j;
 import me.dyatkokg.bookreaderbooksapi.exception.BookNotFoundException;
 import me.dyatkokg.bookreaderbooksapi.exception.IncorrectFileTypeException;
+import me.dyatkokg.bookreaderbooksapi.exception.NotAuthorizedException;
 import me.dyatkokg.bookreaderbooksapi.exception.PageNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +32,17 @@ public class APIExceptionHandler {
     public ResponseEntity<Object> handlePageNotFound(PageNotFoundException exception) {
         log.error(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Page was not found. Try again!");
+    }
+
+    @ExceptionHandler({NotAuthorizedException.class})
+    public ResponseEntity<Object> handleNotAuthorized(NotAuthorizedException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authorized");
+    }
+
+    @ExceptionHandler({TokenExpiredException.class})
+    public ResponseEntity<Object> handleTokenNotValid(TokenExpiredException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token has expired!");
     }
 }

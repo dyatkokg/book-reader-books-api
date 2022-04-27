@@ -1,4 +1,12 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/Books_App
+  application:
+    name: book-reader-books-api
+  profiles:
+    active: development
+  config:
+    import: optional:configserver:http://localhost:8080
+  cloud:
+    config:
+      fail-fast: true
+server:
+  port: 8082

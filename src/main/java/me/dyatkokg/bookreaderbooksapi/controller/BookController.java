@@ -3,7 +3,6 @@ package me.dyatkokg.bookreaderbooksapi.controller;
 import lombok.RequiredArgsConstructor;
 import me.dyatkokg.bookreaderbooksapi.dto.AllBookDTO;
 import me.dyatkokg.bookreaderbooksapi.dto.BookDTO;
-import me.dyatkokg.bookreaderbooksapi.dto.ReadBookDTO;
 import me.dyatkokg.bookreaderbooksapi.entity.BookPage;
 import me.dyatkokg.bookreaderbooksapi.service.BookService;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,9 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("upload")
-    public ResponseEntity<BookDTO> uploadBook(@RequestParam("name") String name,@RequestParam("author") String author,
-            @RequestParam("file") MultipartFile file){
-        return bookService.parse(name,author,file);
+    public ResponseEntity<BookDTO> uploadBook(@RequestParam("name") String name, @RequestParam("author") String author,
+                                              @RequestParam("file") MultipartFile file) {
+        return bookService.parse(name, author, file);
     }
 
     @GetMapping("{id}")

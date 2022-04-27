@@ -2,7 +2,7 @@ package me.dyatkokg.bookreaderbooksapi.exception;
 
 public class BookNotFoundException extends RuntimeException{
 
-    public BookNotFoundException(){
+    public BookNotFoundException() {
         super("Book was not found");
     }
 
