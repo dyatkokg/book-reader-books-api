@@ -13,5 +13,6 @@ import java.util.List;
 public class ReadBookDTO {
 
     private List<BookPage> page;
+
     private String owner;
 }
