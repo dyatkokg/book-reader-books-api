@@ -2,5 +2,7 @@ package me.dyatkokg.bookreaderbooksapi.service;
 
 public interface TokenProvider {
 
-    boolean validateToken(String token);
+    void  validateToken(String token);
+
+    String getSubject(String token);
 }

@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
-    @Mapping(source = "owner.id", target = "owner")
+    @Mapping(source = "owner", target = "owner")
     BookDTO toDTO(Book book);
 
     @Mapping(target = "owner", ignore = true)

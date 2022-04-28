@@ -11,9 +11,11 @@ import me.dyatkokg.bookreaderbooksapi.entity.Book;
 import me.dyatkokg.bookreaderbooksapi.entity.BookPage;
 import me.dyatkokg.bookreaderbooksapi.exception.BookNotFoundException;
 import me.dyatkokg.bookreaderbooksapi.exception.IncorrectFileTypeException;
+import me.dyatkokg.bookreaderbooksapi.exception.NotAuthorizedException;
 import me.dyatkokg.bookreaderbooksapi.mapper.BookMapper;
 import me.dyatkokg.bookreaderbooksapi.repository.BookRepository;
 import me.dyatkokg.bookreaderbooksapi.service.BookService;
+import me.dyatkokg.bookreaderbooksapi.service.TokenProvider;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,28 +38,33 @@ public class BookServiceImplementation implements BookService {
 
     private final BookRepository repository;
     private final BookMapper mapper;
+    private final TokenProvider provider;
 
-    public ResponseEntity<BookPage> getPageByBookId(String id, Integer page) {
+    public ResponseEntity<BookPage> getPageByBookId(String id, Integer page, String header) {
         ReadBookDTO readBook = repository.findById(id).map(mapper::toEntityReading).orElseThrow(BookNotFoundException::new);
         Optional<BookPage> bookPage = readBook.getPage().stream().filter(e -> e.getNum().equals(page)).findAny();
-        return bookPage.map(ResponseEntity::ok).orElseThrow(() -> new BookNotFoundException(id));
+        if (provider.getSubject(header).equals(readBook.getOwner())) {
+            return bookPage.map(ResponseEntity::ok).orElseThrow(() -> new BookNotFoundException(id));
+        } else throw new NotAuthorizedException();
     }
 
-    public ResponseEntity<BookDTO> remove(String id) {
+    public ResponseEntity<BookDTO> remove(String id, String header) {
         BookDTO deleted = repository.findById(id).map(mapper::toDTO).orElseThrow(BookNotFoundException::new);
         if (deleted == null) {
             throw new BookNotFoundException();
-        } else
+        } else if (provider.getSubject(header).equals(deleted.getOwner())) {
             repository.deleteById(id);
-        return ResponseEntity.ok(deleted);
+            return ResponseEntity.ok(deleted);
+        } else throw new NotAuthorizedException();
     }
 
-    public ResponseEntity<List<AllBookDTO>> findAll() {
-        return ResponseEntity.ok(repository.findAll().stream().map(mapper::toEntityView).collect(Collectors.toList()));
+    @Override
+    public List<AllBookDTO> findAllByOwner(String header) {
+        return repository.findByOwner(provider.getSubject(header)).stream().map(mapper::toEntityView).collect(Collectors.toList());
     }
 
     @SneakyThrows
-    public ResponseEntity<BookDTO> parse(String name, String author, MultipartFile file) {
+    public ResponseEntity<BookDTO> parse(String name, String author, MultipartFile file, String header) {
         if (Objects.requireNonNull(file.getContentType()).equals(MediaType.TEXT_PLAIN_VALUE)) {
             InputStream inputStream = file.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -69,6 +76,7 @@ public class BookServiceImplementation implements BookService {
             book.setPage(bookPages);
             book.setName(name);
             book.setAuthor(author);
+            book.setOwner(provider.getSubject(header));
             return ResponseEntity.ok(mapper.toDTO(repository.save(book)));
         } else throw new IncorrectFileTypeException();
     }

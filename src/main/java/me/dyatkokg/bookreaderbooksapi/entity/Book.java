@@ -27,8 +27,7 @@ public class Book {
 
     private List<BookPage> page;
 
-    @DBRef
-    private User owner;
+    private String owner;
 
 
 }

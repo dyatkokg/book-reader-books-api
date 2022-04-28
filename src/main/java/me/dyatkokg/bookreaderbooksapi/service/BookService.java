@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface BookService {
 
-    ResponseEntity<BookPage> getPageByBookId(String id, Integer page);
+    ResponseEntity<BookPage> getPageByBookId(String id, Integer page,String header);
 
-    ResponseEntity<BookDTO> remove(String id);
+    ResponseEntity<BookDTO> remove(String id,String header);
 
-    ResponseEntity<List<AllBookDTO>> findAll();
+    List<AllBookDTO> findAllByOwner(String header);
 
-    ResponseEntity<BookDTO> parse(String name, String author, MultipartFile file);
+    ResponseEntity<BookDTO> parse(String name, String author, MultipartFile file,String header);
 }
