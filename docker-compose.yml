@@ -1,0 +1,58 @@
+version: '3'
+
+
+services:
+  book-reader-books-api:
+    image: me.dyatkokg/book-reader-books-api:0.0.1-snapshot
+    container_name: "book-reader-books-api"
+    depends_on:
+      - mongo
+      - book-config
+    ports:
+      - "5100:8082"
+    environment:
+      MONGO: mongodb://mongo:27017/Books_App
+      CONFIG_SERVER: optional:configserver:http://book-config:8080
+
+
+  mongo:
+    image: mongo
+    container_name: "mongo"
+    ports:
+      - "27015:27017"
+    volumes:
+      - ./docker/volumes/mongo:/var/lib/mongo/data
+
+
+  book-reader-users-api:
+    image: me.dyatkokg/book-reader-users-api:0.0.1-snapshot
+    container_name: "book-reader-users-api"
+    depends_on:
+      - mongo
+      - book-config
+    ports:
+      - "5101:8081"
+    environment:
+      MONGO: mongodb://mongo:27017/Books_App
+      CONFIG_SERVER: optional:configserver:http://book-config:8080
+
+
+  book-reader-reader-api:
+    image: me.dyatkokg/book-reader-reader-api:0.0.1-snapshot
+    container_name: "book-reader-reader-api"
+    depends_on:
+      - book-reader-books-api
+      - book-config
+    ports:
+      - "5102:8084"
+    environment:
+      BOOKS_URL: book-reader-books-api:8082/books/
+      CONFIG_SERVER: optional:configserver:http://book-config:8080
+
+
+  book-config:
+    image: me.dyatkokg/book-config:0.0.1-snapshot
+    container_name: "book-config"
+    ports:
+      - "5103:8080"
+

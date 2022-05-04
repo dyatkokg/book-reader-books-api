@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface BookService {
 
-    BookPage getPageByBookId(String id, Integer page,String header);
+    BookPage getPageByBookId(String id, Integer page);
 
-    BookDTO remove(String id,String header);
+    BookDTO remove(String id);
 
     List<AllBookDTO> findAllByOwner(String header);
 

@@ -25,13 +25,13 @@ public class BookController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<BookPage> findById(@PathVariable("id") String id, @RequestParam("page") Integer page, @RequestHeader("Authorization") String header) {
-        return ResponseEntity.ok(bookService.getPageByBookId(id, page, header));
+    public ResponseEntity<BookPage> findById(@PathVariable("id") String id, @RequestParam("page") Integer page) {
+        return ResponseEntity.ok(bookService.getPageByBookId(id, page));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<BookDTO> delete(@PathVariable("id") String id, @RequestHeader("Authorization") String header) {
-        return ResponseEntity.ok(bookService.remove(id, header));
+    public ResponseEntity<BookDTO> delete(@PathVariable("id") String id) {
+        return ResponseEntity.ok(bookService.remove(id));
     }
 
     @GetMapping("all")

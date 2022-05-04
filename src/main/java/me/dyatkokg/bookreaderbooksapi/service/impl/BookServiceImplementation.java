@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -40,22 +39,15 @@ public class BookServiceImplementation implements BookService {
     private final BookMapper mapper;
     private final TokenProvider provider;
 
-    public BookPage getPageByBookId(String id, Integer page, String header) {
+    public BookPage getPageByBookId(String id, Integer page) {
         ReadBookDTO readBook = repository.findById(id).map(mapper::toEntityReading).orElseThrow(BookNotFoundException::new);
-        Optional<BookPage> bookPage = readBook.getPage().stream().filter(e -> e.getNum().equals(page)).findAny();
-        if (provider.getSubject(header).equals(readBook.getOwner())) {
-            return bookPage.orElseThrow(() -> new PageNotFoundException(page));
-        } else throw new NotAuthorizedException();
+        return readBook.getPage().stream().filter(e -> e.getNum().equals(page)).findAny().orElseThrow(PageNotFoundException::new);
     }
 
-    public BookDTO remove(String id, String header) {
+    public BookDTO remove(String id) {
         BookDTO deleted = repository.findById(id).map(mapper::toDTO).orElseThrow(BookNotFoundException::new);
-        if (deleted == null) {
-            throw new BookNotFoundException();
-        } else if (provider.getSubject(header).equals(deleted.getOwner())) {
             repository.deleteById(id);
             return deleted;
-        } else throw new NotAuthorizedException();
     }
 
     @Override
