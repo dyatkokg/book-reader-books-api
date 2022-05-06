@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import me.dyatkokg.bookreaderbooksapi.config.filter.FilterUtils;
 import me.dyatkokg.bookreaderbooksapi.dto.AllBookDTO;
 import me.dyatkokg.bookreaderbooksapi.dto.BookDTO;
 import me.dyatkokg.bookreaderbooksapi.dto.ReadBookDTO;
@@ -18,6 +19,7 @@ import me.dyatkokg.bookreaderbooksapi.repository.BookRepository;
 import me.dyatkokg.bookreaderbooksapi.service.BookService;
 import me.dyatkokg.bookreaderbooksapi.service.TokenProvider;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,12 +53,13 @@ public class BookServiceImplementation implements BookService {
     }
 
     @Override
-    public List<AllBookDTO> findAllByOwner(String header) {
-        return repository.findByOwner(provider.getSubject(header)).stream().map(mapper::toEntityView).collect(Collectors.toList());
+    public List<AllBookDTO> findAllByOwner() {
+        return repository.findByOwner(provider.getSubject(FilterUtils.getTokenFromSecurityContext()))
+                .stream().map(mapper::toEntityView).collect(Collectors.toList());
     }
 
     @SneakyThrows
-    public BookDTO parse(String name, String author, MultipartFile file, String header) {
+    public BookDTO parse(String name, String author, MultipartFile file) {
         if (Objects.requireNonNull(file.getContentType()).equals(MediaType.TEXT_PLAIN_VALUE)) {
             InputStream inputStream = file.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -68,7 +71,7 @@ public class BookServiceImplementation implements BookService {
             book.setPage(bookPages);
             book.setName(name);
             book.setAuthor(author);
-            book.setOwner(provider.getSubject(header));
+            book.setOwner(provider.getSubject(FilterUtils.getTokenFromSecurityContext()));
             return mapper.toDTO(repository.save(book));
         } else throw new IncorrectFileTypeException();
     }

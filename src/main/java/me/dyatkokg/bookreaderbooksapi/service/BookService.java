@@ -13,7 +13,7 @@ public interface BookService {
 
     BookDTO remove(String id);
 
-    List<AllBookDTO> findAllByOwner(String header);
+    List<AllBookDTO> findAllByOwner();
 
-    BookDTO parse(String name, String author, MultipartFile file,String header);
+    BookDTO parse(String name, String author, MultipartFile file);
 }

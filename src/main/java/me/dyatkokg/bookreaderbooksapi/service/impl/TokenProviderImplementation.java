@@ -21,7 +21,7 @@ public class TokenProviderImplementation implements TokenProvider {
     }
 
     public String getSubject(String token) {
-        return JWT.decode(token.substring(7)).getSubject();
+        return JWT.decode(token).getSubject();
     }
 
 }

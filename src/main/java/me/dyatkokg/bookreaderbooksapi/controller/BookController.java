@@ -20,8 +20,8 @@ public class BookController {
 
     @PostMapping("upload")
     public ResponseEntity<BookDTO> uploadBook(@RequestParam("name") String name, @RequestParam("author") String author,
-                                              @RequestParam("file") MultipartFile file, @RequestHeader("Authorization") String header) {
-        return ResponseEntity.ok(bookService.parse(name, author, file, header));
+                                              @RequestParam("file") MultipartFile file ) {
+        return ResponseEntity.ok(bookService.parse(name, author, file));
     }
 
     @GetMapping("{id}")
@@ -35,7 +35,7 @@ public class BookController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<List<AllBookDTO>> findAllByOwner(@RequestHeader("Authorization") String header) {
-        return ResponseEntity.ok(bookService.findAllByOwner(header));
+    public ResponseEntity<List<AllBookDTO>> findAllByOwner() {
+        return ResponseEntity.ok(bookService.findAllByOwner());
     }
 }

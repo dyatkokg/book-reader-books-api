@@ -3,9 +3,11 @@ package me.dyatkokg.bookreaderbooksapi.config.filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.dyatkokg.bookreaderbooksapi.entity.Book;
+import me.dyatkokg.bookreaderbooksapi.exception.BookNotFoundException;
 import me.dyatkokg.bookreaderbooksapi.exception.NotAuthorizedException;
 import me.dyatkokg.bookreaderbooksapi.repository.BookRepository;
 import me.dyatkokg.bookreaderbooksapi.service.TokenProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,13 +31,19 @@ public class CheckAccessFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tokenFromRequest = FilterUtils.getTokenFromRequest(request);
         String providerSubject = tokenProvider.getSubject(tokenFromRequest);
+
         String requestURI = request.getRequestURI();
         String id = requestURI.substring(7);
         if (!(id.equals("all") || id.equals("update"))) {
-            Book byId = repository.findById(id).orElseThrow();
-            if (providerSubject.equals(byId.getOwner())) {
-                filterChain.doFilter(request, response);
-            } else throw new NotAuthorizedException();
+            try {
+                Book byId = repository.findById(id).orElseThrow(BookNotFoundException::new);
+                if (!providerSubject.equals(byId.getOwner())) {
+                    throw new NotAuthorizedException();
+                }
+            } catch (BookNotFoundException | NotAuthorizedException e) {
+                e.printStackTrace();
+                SecurityContextHolder.clearContext();
+            }
         }
         filterChain.doFilter(request, response);
     }
