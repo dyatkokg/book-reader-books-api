@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -71,7 +72,9 @@ public class BookServiceImplementation implements BookService {
             book.setPage(bookPages);
             book.setName(name);
             book.setAuthor(author);
-            book.setOwner(provider.getSubject(FilterUtils.getTokenFromSecurityContext()));
+            String subject = provider.getSubject(FilterUtils.getTokenFromSecurityContext());
+            book.setOwner(subject);
+            book.setHasAccess(Collections.singletonList(subject));
             return mapper.toDTO(repository.save(book));
         } else throw new IncorrectFileTypeException();
     }

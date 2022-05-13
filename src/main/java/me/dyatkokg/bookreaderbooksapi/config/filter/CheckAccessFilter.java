@@ -34,10 +34,10 @@ public class CheckAccessFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
         String id = requestURI.substring(7);
-        if (!(id.equals("all") || id.equals("update"))) {
+        if (!(id.equals("all") || id.equals("upload"))) {
             try {
                 Book byId = repository.findById(id).orElseThrow(BookNotFoundException::new);
-                if (!providerSubject.equals(byId.getOwner())) {
+                if (!byId.getHasAccess().contains(providerSubject)) {
                     throw new NotAuthorizedException();
                 }
             } catch (BookNotFoundException | NotAuthorizedException e) {

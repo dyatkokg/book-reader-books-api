@@ -28,6 +28,7 @@ public class Book {
 
     private String owner;
 
+    private List<String> hasAccess;
 
 }
 
