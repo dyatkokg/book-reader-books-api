@@ -30,5 +30,7 @@ public class Book {
 
     private List<String> hasAccess;
 
+    private List<String> tags;
+
 }
 

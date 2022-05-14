@@ -9,5 +9,6 @@ public interface BookRepository extends MongoRepository<Book, String> {
 
     List<Book> findByOwner(String header);
 
+    List<Book> findAllByTagsIn(List<String> tag);
 
 }

@@ -34,15 +34,19 @@ public class CheckAccessFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String[] splitURI = requestURI.split("/");
         String id = splitURI[splitURI.length - 1];
-        if (!(id.equals("all") || id.equals("upload") || id.equals("grant"))) {
-            try {
-                Book byId = repository.findById(id).orElseThrow(BookNotFoundException::new);
-                if (!byId.getHasAccess().contains(providerSubject)) {
-                    throw new NotAuthorizedException();
+        if (!(requestURI.contains("access") || requestURI.contains("tags"))) {
+            if (!(id.equals("all") || id.equals("upload"))) {
+                try {
+                    Book byId = repository.findById(id).orElseThrow(BookNotFoundException::new);
+                    if (!byId.getHasAccess().contains(providerSubject)) {
+                        throw new NotAuthorizedException();
+                    }
+
+                } catch (BookNotFoundException | NotAuthorizedException e) {
+                    e.printStackTrace();
+                    SecurityContextHolder.clearContext();
+
                 }
-            } catch (BookNotFoundException | NotAuthorizedException e) {
-                e.printStackTrace();
-                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);
