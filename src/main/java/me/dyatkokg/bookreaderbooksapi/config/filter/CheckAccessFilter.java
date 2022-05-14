@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -33,8 +32,9 @@ public class CheckAccessFilter extends OncePerRequestFilter {
         String providerSubject = tokenProvider.getSubject(tokenFromRequest);
 
         String requestURI = request.getRequestURI();
-        String id = requestURI.substring(7);
-        if (!(id.equals("all") || id.equals("upload"))) {
+        String[] splitURI = requestURI.split("/");
+        String id = splitURI[splitURI.length - 1];
+        if (!(id.equals("all") || id.equals("upload") || id.equals("grant"))) {
             try {
                 Book byId = repository.findById(id).orElseThrow(BookNotFoundException::new);
                 if (!byId.getHasAccess().contains(providerSubject)) {
